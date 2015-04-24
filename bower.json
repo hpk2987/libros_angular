@@ -1,0 +1,11 @@
+{
+  "name": "angularTest",
+  "description": "Test for AngularJS",
+  "version": "0.0.1",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "1.2.x",
+    "angular-route": "1.2.x",
+  }
+}

@@ -1,0 +1,13 @@
+<h1>Libros</h1>
+<table class="table">
+	<thead>
+		<th>Nombre</th>
+		<th>Autor</th>
+	</thead>
+	<tbody>
+		<tr ng-repeat="libro in libros">
+			<td ng-bind="libro.nombre"></td>
+			<td ng-bind="libro.autor.nombre"></td>
+		</li>
+	</tbody>
+</table>
