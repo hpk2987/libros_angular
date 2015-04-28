@@ -1,0 +1,24 @@
+<div class="form-signin">
+	<h2 class="form-signin-heading">Ingresar</h2>
+	<form ng-submit="loginUser()" ng-model="user">
+		<input class="form-control" 
+		placeholder="Nombre de usuario"
+		type="text" 
+		autofocus
+		required
+		ng-model="user.username">
+
+		<input class="form-control" 
+		placeholder="Clave"
+		type="password" 
+		required
+		ng-model="user.password">
+		
+		<input type="submit" 
+		class="btn btn-lg btn-block btn-primary" 
+		value="Ingresar">
+	</form>
+	<alert ng-repeat="alert in alerts" 
+	type="{{alert.type}}" 
+	close="alerts.splice($index, 1)">{{alert.msg}}</alert>
+</div>
