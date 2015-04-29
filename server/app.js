@@ -3,12 +3,15 @@ var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var jwt = require('jsonwebtoken');
-
+var Datastore = require('nedb');
 var api = require('./routes/api');
-
 var app = express();
+var config = require('./config')
 
-var secret = "Secret!";
+app.db = new Datastore({
+		filename: config.db.filename,
+		autoload: true
+	});
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -20,6 +23,7 @@ app.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+    res.locals.db = app.db;
     next();
 });
 

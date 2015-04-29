@@ -1,9 +1,10 @@
 'use strict';
 
 angular.module('booksApp')
+	/* Handle login */
 	.controller('LoginController', function($scope,$location, Auth) {
 		$scope.alerts = [];
-		$scope.loginUser = function(event) {
+		$scope.loginUser = function() {
 			Auth.authenticate($scope.user)
 				.then(function(user) {
 					$location.path("/");
@@ -14,13 +15,20 @@ angular.module('booksApp')
 					});
 				})
 		}
+
+		$scope.logoutUser = function(){
+			Auth.setUser(null);
+			$location.path("/login");
+		}
 	})
-	.factory('Auth', function($q, $http, url) {
+	/* Handle authentication and user data */
+	.factory('Auth', function($q, $http,$rootScope, url) {
 		var user;
 
 		return {
 			setUser: function(aUser) {
 				user = aUser;
+				$rootScope.user = user;
 			},
 			isLoggedIn: function() {
 				return (user) ? user : false;
@@ -41,17 +49,15 @@ angular.module('booksApp')
 			}
 		}
 	})
+	/* Redirect to login if not logged */
 	.run(function($rootScope, $location, Auth) {
 		$rootScope.$on('$routeChangeStart', function(event, next, current) {
 
 			if (!Auth.isLoggedIn()) {
-				console.log('DENY');
 				// no logged user, redirect to /login
 				if (next.templateUrl != "login.html") {
 					$location.path("/login");
 				}
-			} else {
-				console.log('ALLOW');
 			}
 		});
 	});

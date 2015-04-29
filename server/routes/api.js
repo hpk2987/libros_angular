@@ -1,11 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var jwt = require('jsonwebtoken');
-var Datastore = require('nedb'),
-	db = new Datastore({
-		filename: './users.db',
-		autoload: true
-	});
+var fs = require('fs');
+var config = require('../config')
+
+/*********************/
+/*  AUTHENTICATION   */
+/*********************/
 
 function ensureAuthorized(req, res, next) {
 	var bearerToken;
@@ -15,15 +16,21 @@ function ensureAuthorized(req, res, next) {
 		bearerToken = bearer[1];
 
 		try {
-			var decoded = jwt.verify(req.body.token, secret);
+			var decoded = jwt.verify(req.body.token, config.appSecret);
 			next();
 		} catch (err) {
 			// err
 			console.log(err);
-			res.send(403);
+			res.status(403)
+				.json({
+					message: 'Not authorized'
+				});
 		}
 	} else {
-		res.send(403);
+		res.status(403)
+			.json({
+				message: 'Not authorized'
+			});
 	}
 }
 
@@ -31,7 +38,7 @@ router.post('/authenticate', function(req, res, next) {
 	var username = req.body.username,
 		password = req.body.password;
 
-	db.find({
+	res.locals.db.find({
 		username: username,
 		password: password
 	}, function(err, docs) {
@@ -56,8 +63,36 @@ router.post('/authenticate', function(req, res, next) {
 
 });
 
+/*********************/
+/*     SERVICES		 */
+/*********************/
+
+var https = require("https");
+
+var googleAPI = {
+	searchVolumes: function(query, callback) {
+		var url = googleAPI.url +
+			"/volumes?q=" + query + "&key=" + config.google.APIKey;
+
+		return https.get(config.google.url, function(res) {
+			callback(res.data);
+		}).on('error', function(err) {
+			callback(null, err);
+		});
+	}
+}
+
 router.post('/books', ensureAuthorized, function(req, res, next) {
-	res.json({});
+	googleAPI.searchVolumes("flowers+inauthor:keyes", function(data, err) {
+		if (err != null) {
+			res.status = 500;
+			res.json({
+				message: err.message
+			});
+		} else {
+			res.json(data);
+		}
+	})
 });
 
 module.exports = router;
