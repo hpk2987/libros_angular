@@ -1,89 +1,75 @@
 var express = require('express');
 var router = express.Router();
-var jwt = require('jsonwebtoken');
 var fs = require('fs');
-var config = require('../config')
+var config = require('../config');
+var tokenManager = require('../tokenmanager');
+
+function sendServerError(err, res) {
+	res.status = 500;
+	res.json({
+		message: err.message
+	});
+}
 
 /*********************/
 /*  AUTHENTICATION   */
 /*********************/
 
-function ensureAuthorized(req, res, next) {
-	var bearerToken;
-	var bearerHeader = req.headers["authorization"];
-	if (typeof bearerHeader !== 'undefined') {
-		var bearer = bearerHeader.split(" ");
-		bearerToken = bearer[1];
+router.post('/accesstokens', function(req, res, next) {
+	var user = {
+		username: req.body.username,
+		password: req.body.password
+	};
 
-		try {
-			var decoded = jwt.verify(req.body.token, config.appSecret);
-			next();
-		} catch (err) {
-			// err
-			console.log(err);
-			res.status(403)
-				.json({
-					message: 'Not authorized'
-				});
-		}
-	} else {
-		res.status(403)
-			.json({
-				message: 'Not authorized'
-			});
-	}
-}
-
-router.post('/authenticate', function(req, res, next) {
-	var username = req.body.username,
-		password = req.body.password;
-
-	res.locals.db.find({
-		username: username,
-		password: password
-	}, function(err, docs) {
+	res.locals.db.find(user, function(err, docs) {
 		if (err != null) {
-			res.status(500);
-			res.json({
-				message: err.message
-			})
+			sendServerError(err, res);
 		} else {
 			if (docs.length != 0) {
-				res.json({
-					token: docs[0].token
+				tokenManager.createUserToken(res.locals.db, docs[0], function(err, id) {
+					if (err != null) {
+						sendServerError(err, res);
+					} else {
+						res.status(201);
+						res.json({
+							location: '/api/accesstokens/' + id
+						});
+					}
 				});
 			} else {
-				res.status(403);
+				res.status(401);
 				res.json({
-					message: 'Invalid user or pass'
+					message: 'Unauthorized'
 				});
 			}
 		}
 	});
+});
 
+router.get('/accesstokens/:id', function(req, res, next) {
+	res.locals.db.find({
+		_id: req.params.id
+	}, function(err, docs) {
+		if (err != null) {
+			sendServerError(err, res);
+		} else {
+			if (docs.length > 0) {
+				res.json({
+					token: docs[0].token
+				});
+			}else{
+				res.sendStatus(404);
+			}
+		}
+	});
 });
 
 /*********************/
 /*     SERVICES		 */
 /*********************/
 
-var https = require("https");
-
-var googleAPI = {
-	searchVolumes: function(query, callback) {
-		var url = googleAPI.url +
-			"/volumes?q=" + query + "&key=" + config.google.APIKey;
-
-		return https.get(config.google.url, function(res) {
-			callback(res.data);
-		}).on('error', function(err) {
-			callback(null, err);
-		});
-	}
-}
-
-router.post('/books', ensureAuthorized, function(req, res, next) {
-	googleAPI.searchVolumes("flowers+inauthor:keyes", function(data, err) {
+router.get('/books', function(req, res, next) {
+	res.locals.googleAPI.searchVolumes(req.query.q, function(data, err) {
 		if (err != null) {
 			res.status = 500;
 			res.json({
