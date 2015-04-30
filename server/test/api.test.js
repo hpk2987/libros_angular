@@ -4,21 +4,7 @@ var app = require('../app.js');
 var config = require('../config.js');
 var Datastore = require('nedb');
 var tokenManager = require('../tokenmanager');
-
-function prepareDb() {
-    fs.unlink(config.db.test, function(err) {
-        if (err) {
-            console.log('WARNING: ' + err);
-        } else {
-            console.log('successfully deleted ' + config.db.test);
-        }
-    });
-
-    app.db = new Datastore({
-        filename: config.db.test,
-        autoload: true
-    });
-}
+var assert = require('assert');
 
 function prepareTestUser(callback) {
     tokenManager.createUserWithToken(
@@ -29,18 +15,14 @@ function prepareTestUser(callback) {
         callback);
 }
 
-function doneErr(done, err) {
-    if (err != null) {
-        done.fail(err.message);
-    } else {
-        done();
-    }
-}
-
 describe("In book server", function() {
+    beforeEach('Preparing DB', function() {
+        app.db = new Datastore();
+    });
+
     describe("routing", function() {
+
         it("should exists route authenticate", function(done) {
-            prepareDb();
 
             request(app)
                 .post('/api/authenticate', {
@@ -48,28 +30,23 @@ describe("In book server", function() {
                     password: 'a'
                 })
                 .expect('Content-Type', /json/)
-                .expect(403)
-                .end(function(err, res) {
-                    doneErr(done, err);
-                });
+                .expect(403, done);
+
         });
 
         it("should exists route books", function(done) {
-            prepareDb();
 
             request(app)
                 .post('/api/books')
                 .expect('Content-Type', /json/)
-                .expect(403)
-                .end(function(err, res) {
-                    doneErr(done, err);
-                });
+                .expect(403, done);
+
         });
     });
 
     describe("authentication", function() {
+
         it("should allow authentication with correct credentials", function(done) {
-            prepareDb();
 
             prepareTestUser(
                 function(err, newDoc) {
@@ -86,11 +63,12 @@ describe("In book server", function() {
                             .expect('Content-Type', /json/)
                             .expect(200)
                             .end(function(err, res) {
-                                expect(res.body.token).toBeDefined();
-                                doneErr(done, err);
+                                assert.notEqual(res.body.token, null, "No hay token");
+                                done();
                             });
                     }
                 });
+
         });
     });
 });

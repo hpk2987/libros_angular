@@ -6,8 +6,7 @@ var config = {
 	appSecret: "Secret!",
 
 	db: {
-		filename: "./db/users.db",
-		test: "./db/test.db"
+		filename: "./db/users.db"
 	}
 }
 
