@@ -1,13 +1,38 @@
-<h1>Libros</h1>
+<h3>Listado</h3>
+<div class="row">
+	<div class="col-lg-9">
+		<p>Total encontrados {{result.total}} </p>
+	</div>
+	<div class="col-lg-3">
+		<form>
+			<input type="text" ng-model="query">
+			<button type="submit" 
+			class="btn btn-primary btn-sm" 
+			ng-click="executeQuery()">
+				<span class="glyphicon glyphicon-search"/>
+			</button>
+		</form>
+	</div>
+</div>
+<alert ng-repeat="alert in alerts" 
+	type="{{alert.type}}" 
+	close="alerts.splice($index, 1)">{{alert.msg}}</alert>
 <table class="table">
 	<thead>
 		<th>Nombre</th>
-		<th>Autor</th>
+		<th>Autores</th>
+		<th>Editorial</th>
 	</thead>
 	<tbody>
-		<tr ng-repeat="book in books">
-			<td ng-bind="book.name"></td>
-			<td ng-bind="book.author.name"></td>
+		<tr ng-repeat="item in result.books">
+			<td ng-bind="item.title"></td>
+			<td>
+				<ul ng-repeat="author in item.authors">
+					<li ng-bind="author"></li>
+				</ul>
+			</td>
+			
+			<td ng-bind="item.publisher"></td>
 		</li>
 	</tbody>
 </table>

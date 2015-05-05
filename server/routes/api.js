@@ -32,7 +32,7 @@ router.post('/accesstokens', function(req, res, next) {
 					} else {
 						res.status(201);
 						res.json({
-							location: '/api/accesstokens/' + id
+							href: '/accesstokens/' + id
 						});
 					}
 				});

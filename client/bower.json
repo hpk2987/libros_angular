@@ -7,9 +7,9 @@
   "dependencies": {
     "angular": "1.2.x",
     "angular-route": "1.2.x",
-    "angular-mocks": "~1.2.x"
-    "angular-bootstrap": "0.12.1"
+    "angular-mocks": "~1.2.x",
+    "angular-bootstrap": "0.12.1",
     "jquery": "2.1.4",
-    "bootstrap, "3.3.4"
+    "bootstrap": "3.3.4"
   }
 }

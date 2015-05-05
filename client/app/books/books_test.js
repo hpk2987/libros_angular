@@ -14,7 +14,7 @@ describe('booksApp.books module', function() {
 		}));
 
 
-		it('should have libros defined', inject(function($controller,$rootScope) {
+		it('should have books defined', inject(function($controller,$rootScope) {
 			scope = $rootScope.$new(); //get a childscope
 			var controller = $controller('BooksController',{$scope:scope});
 			expect(scope.books).toBeDefined();

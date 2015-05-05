@@ -22,9 +22,9 @@ function prepareTestUser(callback) {
                     if (err != null) {
                         assert("Error al crear usuario", false);
                     } else {
-                        app.db.find({ _id:id },function(err,docs){
-                            if(err!=null || docs.length==0){
-                                assert("Error al crear usuario",false);
+                        app.db.find({ _id:id }, function(err, docs) {
+                            if (err != null || docs.length == 0) {
+                                assert("Error al crear usuario", false);
                             }
                             callback(docs[0]);
                         })                        
@@ -34,27 +34,30 @@ function prepareTestUser(callback) {
     });
 }
 
-describe("In book server", function() {
-    beforeEach('Preparing DB', function() {
-        app.db = new Datastore();
+app.db = new Datastore();
+
+describe("In book server", function() { 
+
+    afterEach("Clean Database", function() {
+        app.db.remove({});
     });
 
     describe("routing", function() {
         it("should exists route authenticate", function(done) {
             request(app)
-                .post('/api/accesstokens', {
-                    username: 'a',
-                    password: 'a'
-                })
-                .expect('Content-Type', /json/)
-                .expect(401, done);
+            .post('/api/accesstokens', {
+                username: 'a',
+                password: 'a'
+            })
+            .expect('Content-Type', /json/)
+            .expect(401, done);
         });
 
         it("should exists route books", function(done) {
             request(app)
-                .get('/api/books')
-                .expect('Content-Type', /json/)
-                .expect(401, done);
+            .get('/api/books')
+            .expect('Content-Type', /json/)
+            .expect(401, done);
 
         });
     });
@@ -64,54 +67,49 @@ describe("In book server", function() {
             prepareTestUser(
                 function(user) {
                     request(app)
-                        .post('/api/accesstokens')
-                        .send({
-                            username: 'test',
-                            password: 'test'
-                        })
-                        .set('Content-Type:', 'application/json')
-                        .expect('Content-Type', /json/)
-                        .expect(201)
-                        .end(function(err, res) {
-                            var rePattern = new RegExp(/\/api\/accesstokens\/.*$/);
-                            var arrMatches = res.body.location.match(rePattern);
-                            assert(arrMatches[0] === res.body.location, "Location invalido => " + res.body.location);
-                            done();
-                        });
+                    .post('/api/accesstokens')
+                    .send({
+                        username: 'test',
+                        password: 'test'
+                    })
+                    .set('Content-Type:', 'application/json')
+                    .expect('Content-Type', /json/)
+                    .expect(201)
+                    .end(function(err, res) {
+                        var rePattern = new RegExp(/\/accesstokens\/.*$/);
+                        var arrMatches = res.body.href.match(rePattern);                        
+                        assert(arrMatches!=null,"No match");
+                        assert(arrMatches.length>0,"No match");
+                        assert(arrMatches[0] === res.body.href, "Location invalido => " + res.body.href);
+                        done();
+                    });
                 });
         });
     });
 
     describe("api", function() {
+        
         it("should return json response when search books with query", function(done) {
-            var original = app.googleAPI;
-            app.googleAPI = {
-                searchVolumes: function(query, callback) {
-                    console.log("AAAAAAAAAAAAA!");
-                    callback({
-                        dummy: 'ok'
-                    });
-                }
+            var f = app.googleAPI.searchVolumes;
+            app.googleAPI.searchVolumes = function(q,c){
+                c({dummy:'ok'});
             }
-            console.log(app.googleAPI.searchVolumes.toString());
 
             prepareTestUser(
                 function(user) {
                     request(app)
-                        .get('/api/books?q=flowers+inauthor:keyes')
-                        .set('Content-Type:', 'application/json')
-                        .set('Authorization', 'Bearer ' + user.token)
-                        .expect('Content-Type', /json/)
-                        .expect(200)
-                        .end(function(err, res) {
-                            assert.equal(res.body, {
-                                dummy: 'ok'
-                            });
-                            done();
-                        });
-                });
+                    .get('/api/books?q=example')
+                    .set('Content-Type:', 'application/json')
+                    .set('Authorization', 'Bearer ' + user.token)
+                    .expect('Content-Type', /json/)
+                    .expect(200)
+                    .end(function(err, res) {   
+                        assert.deepEqual(res.body, {dummy:'ok'});
+                        done();
 
-            app.googleAPI = original;
+                        app.googleAPI.searchVolumes = f;
+                    });
+                });            
         });
     });
 });

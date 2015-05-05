@@ -21,7 +21,7 @@ app.db = new Datastore({
 app.use(jwt({
 	secret: config.appSecret
 }).unless({
-	path: ['/api/accesstokens']
+	path: [/\/api\/accesstokens.*/]
 }));
 
 app.use(logger('dev'));

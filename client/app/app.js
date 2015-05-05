@@ -2,6 +2,7 @@
 
 angular.module('booksApp', [
 		'ngRoute',
+		'ngStorage',
 		'ui.bootstrap',
 		'booksApp.books'
 	])
