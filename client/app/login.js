@@ -15,11 +15,6 @@ angular.module('booksApp')
 					});
 				})
 		}
-
-		$scope.logoutUser = function(){
-			Auth.logout();
-			$location.path("/login");
-		}
 	})
 	/* Handle authentication and user data */
 	.factory('Auth', function($q, $http,$rootScope, url,$sessionStorage) {

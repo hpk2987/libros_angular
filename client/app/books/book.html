@@ -1,0 +1,75 @@
+<div class="modal-header">
+	<h3>{{book.title}}</h3>
+	<hr class="modal-hr-top"/>
+</div>
+<div class="modal-body">
+	<div clas="row">
+		<div class="col-lg-2">
+			<div ng-show="book.imageLinks.thumbnail">
+				<img ng-src="{{book.imageLinks.thumbnail}}"/>
+			</div>
+		</div>
+
+		<div class="col-lg-10">
+			<div ng-show="book.description">
+				<h5>Descripción</h5>
+				<p class="text-justify" ng-bind-html="book.description"></p>
+				<hr>
+			</div>
+
+			<div>
+				<h6>Autores</h6>
+				<p>{{book.authors.join(',')}}</p>
+			</div>
+
+			<div>
+				<h6>Editorial</h6>
+				<p ng-bind="book.publisher"></p>
+			</div>
+			
+			<div>
+				<h6>Identificación</h6>
+				<ul>
+					<li ng-repeat="id in book.industryIdentifiers">
+						<span ng-bind="id.type"></span>: <span ng-bind="id.identifier"></span>
+					</li>
+				</ul>
+			</div>
+			<div ng-show="book.pageCount">
+				<h6>Paginas</h6>
+				<p ng-bind="book.pageCount"></p>
+			</div>
+			<div ng-show="book.dimensions">
+				<h6>Dimensiones</h6>
+				<ul>
+					<li>
+						Ancho: {{book.dimensions.width}}
+					</li>
+					<li>
+						Alto: {{book.dimensions.height}}
+					</li>
+					<li>
+						Espesor: {{book.dimensions.thickness}}
+					</li>
+				
+				</ul>
+			</div>
+			<div ng-show="book.averageRating">
+				<h6>Rating</h6>
+				<p ng-bind="book.averageRating"></p>
+			</div>
+			<div>
+				<h6>Idioma</h6>
+				<p>{{languages[book.language]}}</p>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer clearfix">	
+	<div class="pull-right">
+		<button 
+			class="btn btn-default" 
+			ng-click="close()">Cerrar
+		</button>
+	</div>
+</div>

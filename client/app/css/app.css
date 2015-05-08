@@ -1,4 +1,83 @@
 
+/******************************/
+/* VERTICAL NAVBAR               */
+/******************************/
+
+/* Solo aplica si el ancho es mayor a 768 */
+@media (min-width: 768px) {
+  .navbar-collapse {
+        height: auto;
+        border-top: 0;
+        box-shadow: none;
+        max-height: none;
+        padding-left:0;
+        padding-right:0;
+    }
+    .navbar-collapse.collapse {
+        display: block !important;
+        width: auto !important;
+        padding-bottom: 0;
+        overflow: visible !important;
+    }
+    .navbar-collapse.in {
+        overflow-x: visible;
+    }
+
+    .navbar
+    {
+        position:fixed;
+        left: 0;
+        max-width:200px;
+        margin: 0;
+        height:100%;
+    }
+
+    .navbar-nav,
+    .navbar-nav > li,
+    .navbar-left,
+    .navbar-right,
+    .navbar-header{
+        float:none !important;
+    }
+
+    .navbar-right .dropdown-menu {left:0;right:auto;}
+
+    .navbar-collapse .navbar-nav.navbar-right:last-child {
+        margin-right: 0;
+    }
+
+    .content-body{
+        position:fixed;
+        left:110px;
+        overflow:auto;
+        height:100%;
+        width:100%;
+        padding-right:140px;
+    }
+
+    .navbar .dropdown-menu{
+        right: auto;
+        top:20%; 
+        left: 100%;
+    }
+}
+
+/******************************/
+/* BOOK BOX                   */
+/******************************/
+
+.book-box{
+    width: 20%;    
+}
+
+.book-box li{
+    height:200px;
+}
+
+/******************************/
+/* SIGN IN FORM               */
+/******************************/
+
 .form-signin {	
     max-width: 330px;
     padding: 15px;
@@ -28,4 +107,104 @@
     margin-bottom: 10px;
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
+}
+
+/******************************/
+/* MODALS                     */
+/******************************/
+
+.modal-hr-top{
+    margin-top:20;
+    margin-bottom:0;
+}
+
+/******************************/
+/* SPINNER                    */
+/******************************/
+
+.overlay{
+    background-color: rgba(0,0,0,0.3);
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+
+.overlay wandering-cubes-spinner{
+    position: absolute;
+    width: 100px;
+    height: 50px;
+    top: 25%;
+    left: 50%;
+    margin-left: -50px; /* margin is -0.5 * dimension */
+    margin-top: -25px; 
+}
+
+.overlay p {
+    font-size: 24;
+    position: absolute;
+    width: 100px;
+    height: 50px;
+    top: 50%;
+    left: 50%;
+    margin-left: -50px; /* margin is -0.5 * dimension */
+    margin-top: -25px; 
+}
+
+/******************************/
+/* ANIMATION                  */
+/******************************/
+
+.fade {
+    /*position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;*/
+    height: 100%;
+    opacity: 1;
+}
+.fade.ng-enter,
+.fade.ng-leave {
+    -webkit-transition: all 1s ease;
+    transition: all 1s ease;
+}
+.fade.ng-enter {
+    opacity: 0;
+}
+.fade.ng-enter-active {
+    opacity: 1;
+}
+.fade.ng-leave {
+    opacity: 1;
+}
+.fade.ng-leave-active {
+    opacity: 0;
+}
+
+.animate-enter, 
+.animate-leave
+{ 
+    -webkit-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -moz-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -ms-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -o-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    position: relative;
+    display: block;
+} 
+ 
+.move-animate-enter.move-animate-enter-active, 
+.move-animate-leave {
+    opacity: 1;
+    top: 0;
+    height: 30px;
+}
+ 
+.move-animate-leave.move-animate-leave-active,
+.move-animate-enter {
+    opacity: 0;
+    top: -50px;
+    height: 0px;
 }

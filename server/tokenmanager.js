@@ -8,10 +8,9 @@ function createUserToken(db, user, callback) {
 	}, config.appSecret);
 
 	var newUser = {
-		_id: user._id,
-		username: user.username,
-		password: user.password,
-		token: token
+		$set:{
+			token: token
+		}
 	};
 
 	db.update({

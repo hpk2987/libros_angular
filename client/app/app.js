@@ -2,7 +2,9 @@
 
 angular.module('booksApp', [
 		'ngRoute',
+		'ngAnimate',
 		'ngStorage',
+		'angular-spinkit',
 		'ui.bootstrap',
 		'booksApp.books'
 	])
@@ -18,6 +20,10 @@ angular.module('booksApp', [
 			.otherwise({
 				redirectTo: '/books'
 			});
+	})
+	.run(function($document){
+		// Initialize foundation
+		$document.foundation();
 	})
 	/* Server REST API */
 	.value('url', 'http://localhost:8000/api');

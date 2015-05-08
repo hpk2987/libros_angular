@@ -8,9 +8,12 @@ var api = require('./routes/api');
 var app = express();
 var config = require('./config')
 var googleAPI = require('./googleapi')
+var cacheManager = require('cache-manager');
 
 /* Inject dependencies */
 app.googleAPI = googleAPI;
+
+app.cache = cacheManager.caching({store: 'memory'});
 
 app.db = new Datastore({
 	filename: config.db.filename,
@@ -34,6 +37,7 @@ app.use(bodyParser.urlencoded({
 app.use(function(req, res, next) {
 	res.locals.db = app.db;
 	res.locals.googleAPI = app.googleAPI;
+	res.locals.cache = app.cache;
 	next();
 });
 

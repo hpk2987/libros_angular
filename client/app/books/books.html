@@ -1,38 +1,51 @@
 <h3>Listado</h3>
-<div class="row">
-	<div class="col-lg-9">
-		<p>Total encontrados {{result.total}} </p>
-	</div>
-	<div class="col-lg-3">
-		<form>
-			<input type="text" ng-model="query">
-			<button type="submit" 
-			class="btn btn-primary btn-sm" 
-			ng-click="executeQuery()">
-				<span class="glyphicon glyphicon-search"/>
-			</button>
-		</form>
+<div class="clearfix">
+	<div class="pull-right">
+		<div class="row">
+			<form>
+				<input type="text" ng-model="query">
+				<button type="submit" 
+				class="btn btn-primary btn-sm" 
+				ng-click="executeQuery()">
+					<span class="glyphicon glyphicon-search"/>
+				</button>
+			</form>
+		</div>
+		<div ng-show="result" class="row">
+			<p>Total encontrados {{result.total}} </p>
+		</div>
 	</div>
 </div>
+
+<pager  total-items="result.total" 
+		ng-change="pagination.pageChange()"
+		items-per-page="pagination.pageSize"
+		ng-model="pagination.page"></pager>
+
 <alert ng-repeat="alert in alerts" 
 	type="{{alert.type}}" 
 	close="alerts.splice($index, 1)">{{alert.msg}}</alert>
-<table class="table">
-	<thead>
-		<th>Nombre</th>
-		<th>Autores</th>
-		<th>Editorial</th>
-	</thead>
-	<tbody>
-		<tr ng-repeat="item in result.books">
-			<td ng-bind="item.title"></td>
-			<td>
-				<ul ng-repeat="author in item.authors">
-					<li ng-bind="author"></li>
-				</ul>
-			</td>
-			
-			<td ng-bind="item.publisher"></td>
+
+<div ng-show="modalLoading" class="overlay">
+	<wandering-cubes-spinner></wandering-cubes-spinner>
+	<p><b>Cargando...</b></p>
+</div>
+
+<div>
+	<ul class="list-inline">	
+		<li class="book-box" ng-repeat="item in result.books">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<p ng-bind="item.title"></p>
+					<p ng-bind="item.authors.join(',')"></p>
+					<p ng-bind="item.publisher"></p>
+
+					<button class="btn btn-default btn-sm" 
+							ng-click="viewBook(item)">
+						<span class="glyphicon glyphicon-info-sign"/>
+					</button>
+				</div>
+			</div>
 		</li>
-	</tbody>
-</table>
+	</ul>
+</div>
