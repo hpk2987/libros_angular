@@ -1,0 +1,25 @@
+<div class="modal-header">
+	<h5>Crear categoria</h5>
+</div>
+<form ng-submit="apply()">
+	<div class="modal-body">
+			<div class="form-group">
+				<label>Nombre</label>
+				<input class="form-control" autofocus ng-model="shelf" type="text"/>		
+			</div>
+		</form>
+	</div>
+	<div class="modal-footer clearfix">	
+		<div class="pull-right">
+			<button 
+				class="btn btn-danger" 
+				ng-click="cancel()">Cancelar
+			</button>
+			<button
+				type="submit"
+				class="btn btn-success"
+				ng-click="apply()">Crear
+			</button>
+		</div>
+	</div>
+</form>

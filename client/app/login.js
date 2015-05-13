@@ -2,7 +2,7 @@
 
 angular.module('booksApp')
 	/* Handle login */
-	.controller('LoginController', function($scope,$location, Auth) {		
+	.controller('LoginController', function($scope,$location, Auth) {
 		$scope.loginUser = function() {
 			$scope.alerts = [];
 			Auth.authenticate($scope.user)
@@ -21,17 +21,18 @@ angular.module('booksApp')
 		
 		var svc = {
 			logout: function(){
+				delete this.user;
 				$sessionStorage.$reset();
-				$rootScope.user = null;
+				$rootScope.$broadcast('userlogout');
 			},
 			setUser: function(aUser) {
-				$sessionStorage.user = aUser;				
-				$rootScope.user = aUser;
-				$http.defaults.headers.common.Authorization = 'Bearer ' + aUser.token
+				$sessionStorage.user = aUser;
+				this.user = aUser;				
+				$http.defaults.headers.common.Authorization = 'Bearer ' + this.user.token;
+				$rootScope.$broadcast('userlogin');
 			},
 			isLoggedIn: function() {
-				var user = $rootScope.user;
-				return (user) ? user : false;
+				return (this.user) ? this.user : false;
 			},
 			authenticate: function(user) {
 				var me = this;
@@ -40,10 +41,8 @@ angular.module('booksApp')
 					.then(function(response) {
 						return $http.get(url + response.data.href)
 						.then(function(response){
-							me.setUser({
-								username: user.username,
-								token: response.data.token
-							});
+							me.setUser(response.data);
+
 							return response.data;
 						},function(response){
 							return $q.reject(response.status + " " + response.data.message);

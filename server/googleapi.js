@@ -47,7 +47,9 @@ function processBooksSearch(result){
                 title: item.volumeInfo.title,
                 authors: item.volumeInfo.authors,
                 publisher: item.volumeInfo.publisher,
-                href: '/books/'+item.id
+                imageLinks: item.volumeInfo.imageLinks,
+                id: item.id,
+                href: '/books/'+item.id                
             });
         });
     }

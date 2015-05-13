@@ -49,8 +49,70 @@ angular.module('booksApp.books', ['ngRoute'])
 			}
 		};
 	})
+	.controller('BookCategoryController', function(
+		$scope,
+		Shelves,
+		Auth){
+
+		$scope.shelvesOf = function(book){
+			var ret = [];
+			Object.keys(Auth.user.shelves).forEach(function(key,index){
+				if(Auth.user.shelves[key].indexOf(book.id)!=-1){
+					ret.push(key);
+				}
+			});
+			return ret;
+		}
+	})
+	.controller('FavouriteController', function(
+		$scope,
+		Shelves,
+		Auth){
+
+		$scope.init = function(book){
+			var updateRemaining = function(){
+				$scope.remainingShelves = [];
+				Object.keys(Auth.user.shelves).forEach(function(key,index){
+					if(Auth.user.shelves[key].indexOf(book.id)==-1){
+						$scope.remainingShelves.push(key);
+					}
+				});
+			}
+
+			var updateInShelf = function(){
+				$scope.isInShelf = false;
+				Object.keys(Auth.user.shelves).forEach(function(key,index){
+					if(Auth.user.shelves[key].indexOf(book.id)!=-1){
+						$scope.isInShelf = true;
+						return;
+					}
+				});
+			}
+					
+			$scope.$on('shelveadd',function(event,args){
+				updateRemaining();
+			});
+
+			updateRemaining();
+			updateInShelf();
+						
+			$scope.addToShelf = function(shelf){
+				Shelves.addToShelf(shelf,book)
+				.then(function(){
+					Auth.user.shelves[shelf].push(book.id);
+					updateRemaining();
+					updateInShelf();
+				},function(notice){
+					$scope.alerts.push({
+						type: 'danger',
+						msg: notice
+					});
+				})
+			}
+		}
+	})
 	.controller('BooksController', function(
-			$scope,
+			$scope,	
 			$location,
 			$modal,
 			$interval,
@@ -107,4 +169,21 @@ angular.module('booksApp.books', ['ngRoute'])
 				});
 			});
 		};
+	})
+	.directive('ellipsis', function ($timeout,$document) {
+	    return {
+	        link: function (scope, element, attrs) {
+	        	$(window).resize(function(){
+					$timeout(function () {
+	    				//DOM has finished rendering
+	    				element.ellipsis();
+					});
+	        	});
+
+	            $timeout(function () {
+    				//DOM has finished rendering
+    				element.ellipsis();
+				});
+	        }
+	    };
 	});

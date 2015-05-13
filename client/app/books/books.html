@@ -1,23 +1,25 @@
-<h3>Listado</h3>
-<div class="clearfix">
-	<div class="pull-right">
-		<div class="row">
-			<form>
-				<input type="text" ng-model="query">
-				<button type="submit" 
-				class="btn btn-primary btn-sm" 
-				ng-click="executeQuery()">
-					<span class="glyphicon glyphicon-search"/>
-				</button>
-			</form>
-		</div>
-		<div ng-show="result" class="row">
+<div class="row">
+	<div class="col-lg-9">
+		<h4>Libros</h4>
+	</div>
+	<div class="col-lg-3">
+		<form id="search-book-form">
+			<input placeholder="Buscar libro" focusme type="text" ng-model="query">
+			<button type="submit"
+			class="btn btn-primary btn-sm" 
+			ng-click="executeQuery()">
+				<span class="glyphicon glyphicon-search"/>
+			</button>
+		</form>
+		<div ng-show="result">
 			<p>Total encontrados {{result.total}} </p>
 		</div>
 	</div>
 </div>
 
 <pager  total-items="result.total" 
+		next-text="Siguiente"
+		previous-text="Anterior"
 		ng-change="pagination.pageChange()"
 		items-per-page="pagination.pageSize"
 		ng-model="pagination.page"></pager>
@@ -31,21 +33,48 @@
 	<p><b>Cargando...</b></p>
 </div>
 
-<div>
-	<ul class="list-inline">	
-		<li class="book-box" ng-repeat="item in result.books">
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<p ng-bind="item.title"></p>
-					<p ng-bind="item.authors.join(',')"></p>
-					<p ng-bind="item.publisher"></p>
+<div class="book-box grid-element panel panel-default" ng-repeat="item in result.books">
+	<div class="panel-body">
+		<div ng-controller="FavouriteController" ng-init="init(item)">
+			<span class="dropdown" dropdown>
+				<a class="dropdown-toggle pull-right" 
+					href
+					dropdown-toggle>
+					<span ng-show="isInShelf" 
+						class="glyphicon glyphicon-star fav-star"/>
+					<span ng-hide="isInShelf" 
+						class="glyphicon glyphicon-star-empty fav-star"/>
+				</a>
+				<ul class="dropdown-menu">
+					<li class="dropdown-header">
+						<span ng-show="remainingShelves.length>0">Seleccionar categoria</span>
+						<span ng-show="remainingShelves.length==0">No hay categorias</span>
+					</li>
 
-					<button class="btn btn-default btn-sm" 
-							ng-click="viewBook(item)">
-						<span class="glyphicon glyphicon-info-sign"/>
-					</button>
-				</div>
-			</div>
-		</li>
-	</ul>
+					<li ng-repeat="shelf in remainingShelves">		        	
+		          		<a href ng-click="addToShelf(shelf)">{{shelf}}</a>
+		        	</li>
+		      	</ul>
+	      	</span>
+      	</div>
+
+		<img ng-show="item.imageLinks.thumbnail"
+			ng-click="viewBook(item)"
+			class="thumb img-responsive"
+			ng-src="{{item.imageLinks.thumbnail}}"/>
+
+		<img ng-hide="item.imageLinks.thumbnail" 
+			ng-click="viewBook(item)"
+			class="thumb" 
+			id="item."
+			src="/app/img/no_thumb.png"></img>
+	</div>			
+	<div ellipsis class="panel-footer">
+		<span ng-bind='item.title'></span>
+	</div>	
+	<div class="panel-categories" ng-controller="BookCategoryController">
+		<span class="badge badge-info" ng-repeat="shelf in shelvesOf(item)">
+			{{shelf}}
+		</span>
+	</div>
 </div>

@@ -21,9 +21,12 @@ angular.module('booksApp', [
 				redirectTo: '/books'
 			});
 	})
-	.run(function($document){
-		// Initialize foundation
-		$document.foundation();
-	})
 	/* Server REST API */
-	.value('url', 'http://localhost:8000/api');
+	.value('url', 'http://localhost:8000/api')
+	.directive('focusme',function(){
+		return{
+			link:function(scope,element,attrs){
+				element.focus();
+			}
+		}
+	});

@@ -44,7 +44,9 @@ router.get('/accesstokens/:id', function(req, res, next) {
 		} else {
 			if (docs.length > 0) {
 				res.json({
-					token: docs[0].token
+					username: docs[0].username,
+					token:docs[0].token,
+					user:'/users/'+docs[0]._id,
 				});
 			}else{
 				res.sendStatus(404);
