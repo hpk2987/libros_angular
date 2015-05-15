@@ -109,6 +109,16 @@ function findUserWithId(res,id,callback){
 	})
 }
 
+function indexInShelf(shelf,bookId){
+	var lookup;
+	shelf.forEach(function(b){
+		if(b.id===bookId){
+			lookup = b;
+		}
+	});
+	return shelf.indexOf(lookup);
+}
+
 // Get user shelves
 router.get('/users/:id/shelves/', function(req, res, next) {
 	findUserWithId(res,req.params.id,function(user){
@@ -183,10 +193,10 @@ router.put('/users/:id/shelves/:shelf/:book', function(req, res, next) {
 		if(shelf==null){
 			res.status(404).json({ message: 'No such shelf' });
 		}else{			
-			if(shelf.indexOf(req.params.book)!=-1){
+			if(indexInShelf(shelf,req.params.book)!=-1){
 				res.status(409).json({ message: 'Book already exists in shelf' });
 			}else{
-				shelf.push(req.params.book);
+				shelf.push(req.body);
 				res.locals.db.update({
 						_id:user._id
 					},user,{},
@@ -210,7 +220,7 @@ router.delete('/users/:id/shelves/:shelf/:book', function(req, res, next) {
 		if(shelf==null){
 			res.status(404).json({ message: 'No such shelf' });
 		}else{
-			var bookIdx = shelf.indexOf(req.params.book);
+			var bookIdx = indexInShelf(shelf,req.params.book);
 			
 			if(bookIdx==-1){
 				res.status(404).json({ message: 'No such book' });

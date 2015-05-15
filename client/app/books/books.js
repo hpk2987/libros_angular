@@ -51,21 +51,49 @@ angular.module('booksApp.books', ['ngRoute'])
 	})
 	.controller('BookCategoryController', function(
 		$scope,
+		$rootScope,
 		Shelves,
 		Auth){
 
-		$scope.shelvesOf = function(book){
-			var ret = [];
-			Object.keys(Auth.user.shelves).forEach(function(key,index){
-				if(Auth.user.shelves[key].indexOf(book.id)!=-1){
-					ret.push(key);
+		$scope.init = function(book){
+			var updateBookShelves = function(){
+				$scope.shelves = [];
+				Object.keys(Auth.user.shelves).forEach(function(key,index){
+					if(Auth.user.shelves[key].find(function(element){
+						return element.id===book.id;
+					})){
+						$scope.shelves.push(key);
+					}
+				});
+			}
+
+			$scope.$on('shelfupdate',function(event,args){
+				if(book===args){
+					updateBookShelves();
 				}
 			});
-			return ret;
+
+			updateBookShelves();			
+
+			$scope.removeFromShelf = function(shelf){
+				if(confirm('Eliminar categoria?')){
+					console.log(shelf,book);
+					Shelves.removeFromShelf(shelf,book)
+					.then(function(){
+						$rootScope.$broadcast('shelfupdate',book);
+					},function(notice){
+						$scope.alerts.push({
+							type: 'danger',
+							msg: notice
+						});
+					})
+				}
+			}
 		}
 	})
 	.controller('FavouriteController', function(
 		$scope,
+		$rootScope,
 		Shelves,
 		Auth){
 
@@ -73,16 +101,20 @@ angular.module('booksApp.books', ['ngRoute'])
 			var updateRemaining = function(){
 				$scope.remainingShelves = [];
 				Object.keys(Auth.user.shelves).forEach(function(key,index){
-					if(Auth.user.shelves[key].indexOf(book.id)==-1){
+					if(!Auth.user.shelves[key].find(function(element){
+						return element.id===book.id;
+					})){
 						$scope.remainingShelves.push(key);
 					}
 				});
 			}
 
 			var updateInShelf = function(){
-				$scope.isInShelf = false;
+				$scope.isInShelf = false;				
 				Object.keys(Auth.user.shelves).forEach(function(key,index){
-					if(Auth.user.shelves[key].indexOf(book.id)!=-1){
+					if(Auth.user.shelves[key].find(function(element){
+						return element.id===book.id;
+					})){
 						$scope.isInShelf = true;
 						return;
 					}
@@ -93,15 +125,20 @@ angular.module('booksApp.books', ['ngRoute'])
 				updateRemaining();
 			});
 
+			$scope.$on('shelfupdate',function(event,args){
+				if(book===args){
+					updateRemaining();
+					updateInShelf();
+				}
+			});
+
 			updateRemaining();
 			updateInShelf();
 						
 			$scope.addToShelf = function(shelf){
 				Shelves.addToShelf(shelf,book)
 				.then(function(){
-					Auth.user.shelves[shelf].push(book.id);
-					updateRemaining();
-					updateInShelf();
+					$rootScope.$broadcast('shelfupdate',book);
 				},function(notice){
 					$scope.alerts.push({
 						type: 'danger',

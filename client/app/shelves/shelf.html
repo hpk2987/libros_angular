@@ -1,0 +1,40 @@
+<h4>{{title}}
+	<a href class="btn btn-danger btn-sm" ng-click="deleteShelf()" title="Eliminar categoria">
+		<span class="remove-shelf glyphicon glyphicon-remove"/>
+	</a>
+</h4>
+
+<form id="search-book-form">
+	<input placeholder="Filtrar" focusme type="text" ng-model="query">
+</form>
+
+<div>
+	<alert ng-repeat="alert in alerts" 
+		type="{{alert.type}}" 
+		close="alerts.splice($index, 1)">{{alert.msg}}</alert>
+</div>
+
+<div ng-show="modalLoading" class="overlay">
+	<wandering-cubes-spinner></wandering-cubes-spinner>
+	<p><b>Cargando...</b></p>
+</div>
+
+<div class="book-shelf">
+	<div class="book-box panel panel-default" ng-repeat="item in books | filter:{title:query}">
+		<div class="panel-body">
+			<img ng-show="item.imageLinks.thumbnail"
+				ng-click="viewBook(item)"
+				class="thumb img-responsive"
+				ng-src="{{item.imageLinks.thumbnail}}"/>
+
+			<img ng-hide="item.imageLinks.thumbnail" 
+				ng-click="viewBook(item)"
+				class="thumb" 
+				id="item."
+				src="/app/img/no_thumb.png"></img>
+		</div>			
+		<div ellipsis class="panel-footer">
+			<span ng-bind='item.title'></span>
+		</div>
+	</div>
+</div>

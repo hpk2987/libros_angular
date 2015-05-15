@@ -233,16 +233,17 @@ describe("In book server", function() {
                 function(user) {
                     request(app)
                     .put('/api/users/'+user._id+'/shelves/cat1/c')
+                    .send({id:'c'})
                     .set('Content-Type:', 'application/json')
                     .set('Authorization', 'Bearer ' + user.token)
                     .expect('Content-Type', /json/)
                     .expect(409)
-                    .end(function(err, res) {   
+                    .end(function(err, res) {
                         assert.deepEqual(res.body, { href : '/users/'+user._id+'/shelves/cat1/c' });
                         done();
                     });
                 },{
-                    cat1:['a','b'],
+                    cat1:[{id:'a'},{id:'b'}],
                     cat2:[]
                 });
         });
@@ -251,7 +252,7 @@ describe("In book server", function() {
             prepareTestUser(
                 function(user) {
                     request(app)
-                    .put('/api/users/'+user._id+'/shelves/cat1/a')
+                    .put('/api/users/'+user._id+'/shelves/cat1/a',{id:'a'})
                     .set('Content-Type:', 'application/json')
                     .set('Authorization', 'Bearer ' + user.token)
                     .expect('Content-Type', /json/)
@@ -261,7 +262,7 @@ describe("In book server", function() {
                         done();
                     });
                 },{
-                    cat1:['a','b'],
+                    cat1:[{id:'a'},{id:'b'}],
                     cat2:[]
                 });
         });
@@ -277,12 +278,12 @@ describe("In book server", function() {
                     .expect(204)
                     .end(function(err, res) {   
                         app.db.find({_id:user._id},function(err,docs){
-                            assert.deepEqual(docs[0].shelves.cat1, ['b']);
+                            assert.deepEqual(docs[0].shelves.cat1, [{id:'b'}]);
                             done();
                         })
                     });
                 },{
-                    cat1:['a','b'],
+                    cat1:[{id:'a'},{id:'b'}],
                     cat2:[]
                 });
         });

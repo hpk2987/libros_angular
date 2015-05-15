@@ -6,7 +6,8 @@ angular.module('booksApp', [
 		'ngStorage',
 		'angular-spinkit',
 		'ui.bootstrap',
-		'booksApp.books'
+		'booksApp.books',
+		'booksApp.shelves'
 	])
 	.config(function($locationProvider) {
 		$locationProvider.hashPrefix('!');

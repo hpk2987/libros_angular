@@ -1,39 +1,37 @@
-<div class="row">
-	<div class="col-lg-9">
-		<h4>Libros</h4>
-	</div>
-	<div class="col-lg-3">
-		<form id="search-book-form">
-			<input placeholder="Buscar libro" focusme type="text" ng-model="query">
-			<button type="submit"
-			class="btn btn-primary btn-sm" 
-			ng-click="executeQuery()">
-				<span class="glyphicon glyphicon-search"/>
-			</button>
-		</form>
-		<div ng-show="result">
-			<p>Total encontrados {{result.total}} </p>
-		</div>
-	</div>
+<h4>Libros</h4>
+<form id="search-book-form">
+	<input placeholder="Buscar libro" focusme type="text" ng-model="query">
+	<button type="submit"
+	class="btn btn-primary btn-sm" 
+	ng-click="executeQuery()">
+		<span class="glyphicon glyphicon-search"/>
+	</button>
+</form>
+<div ng-show="result">
+	<p>Total encontrados {{result.total}} </p>
 </div>
 
-<pager  total-items="result.total" 
+<div>
+	<pager  total-items="result.total" 
 		next-text="Siguiente"
 		previous-text="Anterior"
 		ng-change="pagination.pageChange()"
 		items-per-page="pagination.pageSize"
 		ng-model="pagination.page"></pager>
+</div>
 
-<alert ng-repeat="alert in alerts" 
-	type="{{alert.type}}" 
-	close="alerts.splice($index, 1)">{{alert.msg}}</alert>
+<div>
+	<alert ng-repeat="alert in alerts" 
+		type="{{alert.type}}" 
+		close="alerts.splice($index, 1)">{{alert.msg}}</alert>
+</div>
 
 <div ng-show="modalLoading" class="overlay">
 	<wandering-cubes-spinner></wandering-cubes-spinner>
 	<p><b>Cargando...</b></p>
 </div>
 
-<div class="book-box grid-element panel panel-default" ng-repeat="item in result.books">
+<div class="book-box panel panel-default" ng-repeat="item in result.books">
 	<div class="panel-body">
 		<div ng-controller="FavouriteController" ng-init="init(item)">
 			<span class="dropdown" dropdown>
@@ -41,7 +39,7 @@
 					href
 					dropdown-toggle>
 					<span ng-show="isInShelf" 
-						class="glyphicon glyphicon-star fav-star"/>
+						class="glyphicon glyphicon-star fav-star fav-star-full"/>
 					<span ng-hide="isInShelf" 
 						class="glyphicon glyphicon-star-empty fav-star"/>
 				</a>
@@ -72,9 +70,34 @@
 	<div ellipsis class="panel-footer">
 		<span ng-bind='item.title'></span>
 	</div>	
-	<div class="panel-categories" ng-controller="BookCategoryController">
-		<span class="badge badge-info" ng-repeat="shelf in shelvesOf(item)">
-			{{shelf}}
-		</span>
+	<div class="panel-categories" 
+		ng-controller="BookCategoryController"
+		ng-init="init(item)">
+		<div class="row">
+			<div class="col-lg-3">
+				<div ng-show="shelves.length>0" class="dropdown" dropdown>
+					<a class="dropdown-toggle" 
+						href
+						dropdown-toggle>
+						<span class="glyphicon glyphicon-th-list"/>
+					</a>
+					<ul class="dropdown-menu">
+						<li class="dropdown-header">Categorias asignadas</li>
+						<li ng-repeat="shelf in shelves">
+							<a href ng-click='removeFromShelf(shelf)'>
+								{{shelf}}
+							</a>
+						</li>		
+			      	</ul>
+		      	</div>
+	      	</div>
+	      	<div class="col-lg-9">
+		      	<div class="badges">
+					<span class="badge badge-info" ng-repeat="shelf in shelves">
+						{{shelf}}
+					</span>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>

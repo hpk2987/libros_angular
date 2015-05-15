@@ -9,16 +9,33 @@ angular.module('booksApp')
 						return $q.reject(response.status + " " + response.data.message);
 					});
 			},
-			addToShelf:function(shelf,book){
-				return $http.put(url + Auth.user.user + '/shelves/' + shelf + '/' + book.id, {})
+			deleteShelf: function(shelf){
+				return $http.delete(url + Auth.user.user + '/shelves/' + shelf, {})
 					.then(function(response) {
 					},function(response){
 						return $q.reject(response.status + " " + response.data.message);
-					});	
+					});
+			},
+			addToShelf:function(shelf,book){
+				return $http.put(url + Auth.user.user + '/shelves/' + shelf + '/' + book.id , book)
+					.then(function(response) {
+						Auth.user.shelves[shelf].push(book);
+						},function(response){
+						return $q.reject(response.status + " " + response.data.message);
+					});
+			},
+			removeFromShelf: function(shelf,book){
+				return $http.delete(url + Auth.user.user + '/shelves/' + shelf + '/' + book.id, {})
+					.then(function(response) {
+						Auth.user.shelves[shelf].splice(
+							Auth.user.shelves[shelf].indexOf(JSON.stringify(book),1));
+					},function(response){
+						return $q.reject(response.status + " " + response.data.message);
+					});
 			},
 			getShelves: function(){
 				return $http.get(url + Auth.user.user + '/shelves')
-				.then(function(response){					
+				.then(function(response){
 					return response.data;
 				},function(response){
 					return $q.reject(response.status + " " + response.data.message);
@@ -26,8 +43,13 @@ angular.module('booksApp')
 			}
 		}
 	})
-	.controller('ShelfController', function(
-		$scope,$rootScope,Auth,Shelves,$modal){
+	.controller('ShelvesController', function(
+		$scope,
+		$rootScope,
+		$location,
+		Auth,
+		Shelves,
+		$modal){
 
 		var updateShelves = function(){
 			Shelves.getShelves()
@@ -51,8 +73,20 @@ angular.module('booksApp')
 		}
 
 		$scope.goShelf = function(shelf){
-			alert('TODO');
+			$location.path('/shelves/'+shelf);
 		}
+
+		$scope.$on('shelfdelete',function(event,args){
+			Shelves.getShelves($scope.user)
+			.then(function(shelves){
+				$scope.user.shelves = shelves;
+			},function(notice){
+				$scope.alerts.push({
+					type: 'danger',
+					msg: notice
+				});	
+			});
+		});
 		
 		$scope.newShelf = function(){
 			var modalInstance = $modal.open({
@@ -111,10 +145,6 @@ angular.module('booksApp')
 
 		$scope.goHome = function(){
 			$location.path('/');
-		}
-
-		$scope.goFavourite = function(){
-			$location.path('/favourites');
 		}
 
 		//Los mensajes se eliminan luego de 3 segundos

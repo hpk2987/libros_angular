@@ -38,6 +38,7 @@
 					class="nav navbar-nav navbar-right">
 					<li class="dropdown">
 						<a class="dropdown-toggle" 
+						ng-click="goHome()"
 						data-toggle="dropdown" 
 						role="button" 						
 						aria-expanded="false">
@@ -54,9 +55,9 @@
 							Favoritos
 						</a>
 						<ul class="dropdown-menu"
-						role="menu" ng-controller="ShelfController">
+						role="menu" ng-controller="ShelvesController">
 							<li ng-repeat="(shelfName, shelf) in user.shelves">
-								<a ng-click="goShelf(shelf)">{{shelfName}}</a>
+								<a ng-click="goShelf(shelfName)">{{shelfName}}</a>
 							</li>
 							<li><a ng-click="newShelf()">
 								<span class="glyphicon glyphicon-plus"></span>
@@ -101,5 +102,6 @@
 	<script src="/app/newShelf.js"></script>
 	<script src="/app/books/books.js"></script>
 	<script src="/app/books/book.js"></script>
+	<script src="/app/shelves/shelf.js"></script>
 </body>
 </html>

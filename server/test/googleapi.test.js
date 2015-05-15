@@ -29,8 +29,7 @@ describe('In google API', function() {
             	.reply(200, exampleJSON, {'Content-Type': 'application/json'});
 
         google.searchVolumes('example',function(data,err){
-        	console.log(JSON.stringify(data));
-            assert.equal(JSON.stringify(data), expected);
+        	assert.equal(JSON.stringify(data), expected);
         	done();
         },fakeCache);
 
