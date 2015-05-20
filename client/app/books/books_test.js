@@ -3,7 +3,16 @@
 describe('booksApp.books module', function() {
 	var scope;
 
-	beforeEach(module('booksApp.books'));
+	beforeEach(function(){
+		/* Mock a servicio URL que provee booksApp */
+		module(function($provide) {
+			$provide.service('url', function() {
+				return 'abc';
+			});
+		});
+		/* Modulo a probar */
+		module('booksApp.books');
+	});
 
 	describe('books BooksController', function() {
 
@@ -17,7 +26,7 @@ describe('booksApp.books module', function() {
 		it('should have books defined', inject(function($controller,$rootScope) {
 			scope = $rootScope.$new(); //get a childscope
 			var controller = $controller('BooksController',{$scope:scope});
-			expect(scope.books).toBeDefined();
+			expect(scope.executeQuery).toBeDefined();
 		}));
 
 	});

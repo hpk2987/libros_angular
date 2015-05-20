@@ -6,8 +6,7 @@ function searchVolumes(query,callback,cache,startIndex,maxResults) {
     '/volumes?q=' + query +
     (startIndex != null ? '&startIndex=' + startIndex : '') + 
     (maxResults != null ? '&maxResults=' + maxResults : '') + 
-    '&projection=lite' + 
-    '&key=' + config.google.APIKey;
+    '&projection=lite';
     
     console.log( 'GAPI call => ' + url);
     cache.wrap(url,function(cacheCallback){
@@ -59,8 +58,7 @@ function processBooksSearch(result){
 
 function searchVolume(id,callback,cache) {
     var url = config.google.url +
-    '/volumes/' + id +
-    '?key=' + config.google.APIKey;
+    '/volumes/' + id ;
     
     console.log( 'GAPI call => ' + url);
     cache.wrap(url,function(cacheCallback){

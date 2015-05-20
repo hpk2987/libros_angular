@@ -25,7 +25,7 @@ describe('In google API', function() {
         var expected = fs.readFileSync('./test/expected.processed.example.json', 'utf8');
 
         var scope = nock('https://www.googleapis.com:443')
-				.get('/books/v1/volumes?q=example&projection=lite&key=' + config.google.APIKey)
+				.get('/books/v1/volumes?q=example&projection=lite')
             	.reply(200, exampleJSON, {'Content-Type': 'application/json'});
 
         google.searchVolumes('example',function(data,err){
@@ -40,7 +40,7 @@ describe('In google API', function() {
         nock.disableNetConnect();
     
         var scope = nock('https://www.googleapis.com:443')
-                .get('/books/v1/volumes?q=&projection=lite&key=' + config.google.APIKey)
+                .get('/books/v1/volumes?q=&projection=lite')
                 .reply(200, '{}', {'Content-Type': 'application/json'});
 
         google.searchVolumes('',function(data,err){
@@ -55,7 +55,7 @@ describe('In google API', function() {
         nock.disableNetConnect();
     
         var scope = nock('https://www.googleapis.com:443')
-                .get('/books/v1/volumes?q=&startIndex=0&maxResults=10&projection=lite&key=' + config.google.APIKey)
+                .get('/books/v1/volumes?q=&startIndex=0&maxResults=10&projection=lite')
                 .reply(200, '{}', {'Content-Type': 'application/json'});
 
         google.searchVolumes('',function(data,err){
@@ -73,7 +73,7 @@ describe('In google API', function() {
         var expected = fs.readFileSync('./test/expected.processed.book.example.json', 'utf8');
 
         var scope = nock('https://www.googleapis.com:443')
-                .get('/books/v1/volumes/GgkSAAAACAAJ?key=' + config.google.APIKey)
+                .get('/books/v1/volumes/GgkSAAAACAAJ')
                 .reply(200, exampleJSON, {'Content-Type': 'application/json'});
 
         google.searchVolume('GgkSAAAACAAJ',function(data,err){

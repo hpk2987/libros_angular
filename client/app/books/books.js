@@ -1,6 +1,9 @@
 'use strict';
 
-angular.module('booksApp.books', ['ngRoute'])
+angular.module('booksApp.books', [
+	'ngRoute',
+	'ui.bootstrap'
+	])
 	.config(['$routeProvider', function($routeProvider) {
 		$routeProvider.when('/books', {
 			templateUrl: "books/books.html",
